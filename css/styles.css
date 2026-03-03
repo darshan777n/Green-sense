@@ -794,6 +794,46 @@ footer {
   justify-content: center;
 }
 
+.reviews-grid {
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.review-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 8px 18px rgba(35, 24, 15, 0.08);
+}
+
+.review-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.review-head h3 {
+  color: var(--primary);
+  font-size: 1rem;
+}
+
+.review-stars {
+  color: #cf8a2f;
+  letter-spacing: 1px;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.review-card p {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
 .chatbot-toggle {
   position: fixed;
   right: 20px;

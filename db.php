@@ -89,6 +89,17 @@ try {
             visit_count INT NOT NULL DEFAULT 1
         ) ENGINE=InnoDB"
     );
+    $pdo->exec(
+        "CREATE TABLE IF NOT EXISTS reviews (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            reviewer_name VARCHAR(80) NOT NULL,
+            rating TINYINT UNSIGNED NOT NULL,
+            review_text TEXT NOT NULL,
+            is_approved TINYINT(1) NOT NULL DEFAULT 1,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_reviews_approved_created (is_approved, created_at)
+        ) ENGINE=InnoDB"
+    );
 
     $adminCount = (int) $pdo->query("SELECT COUNT(*) FROM admins")->fetchColumn();
     if ($adminCount === 0) {
@@ -96,6 +107,16 @@ try {
         $defaultPassHash = password_hash('Admin@123', PASSWORD_DEFAULT);
         $stmt = $pdo->prepare('INSERT INTO admins (username, password_hash) VALUES (?, ?)');
         $stmt->execute([$defaultUser, $defaultPassHash]);
+    }
+
+    $reviewCount = (int) $pdo->query("SELECT COUNT(*) FROM reviews")->fetchColumn();
+    if ($reviewCount === 0) {
+        $seedReviews = $pdo->prepare(
+            'INSERT INTO reviews (reviewer_name, rating, review_text, is_approved) VALUES (?, ?, ?, 1)'
+        );
+        $seedReviews->execute(['Priya M.', 5, 'The Signature Arabica is now my morning go-to. Fresh aroma, smooth taste, and very consistent quality.']);
+        $seedReviews->execute(['Rohit S.', 4, 'Classic Masala Chai has the perfect spice balance. Tastes authentic and comforting every time.']);
+        $seedReviews->execute(['Ananya K.', 5, 'Fast delivery and excellent packaging. Green Harmony Tea is light, clean, and great for evening relaxation.']);
     }
 } catch (PDOException $e) {
     http_response_code(500);

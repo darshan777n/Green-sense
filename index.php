@@ -1,10 +1,46 @@
 <?php
 session_start();
+require_once __DIR__ . '/db.php';
+
 $flash = $_SESSION['flash_message'] ?? '';
 $contactSuccess = $_SESSION['contact_success'] ?? '';
 $contactError = $_SESSION['contact_error'] ?? '';
 unset($_SESSION['flash_message']);
 unset($_SESSION['contact_success'], $_SESSION['contact_error']);
+
+$reviews = $pdo->query(
+    'SELECT reviewer_name, rating, review_text
+     FROM reviews
+     WHERE is_approved = 1
+     ORDER BY created_at DESC
+     LIMIT 6'
+)->fetchAll();
+
+if (!$reviews) {
+    $reviews = [
+        [
+            'reviewer_name' => 'Priya M.',
+            'rating' => 5,
+            'review_text' => 'The Signature Arabica is now my morning go-to. Fresh aroma, smooth taste, and very consistent quality.',
+        ],
+        [
+            'reviewer_name' => 'Rohit S.',
+            'rating' => 4,
+            'review_text' => 'Classic Masala Chai has the perfect spice balance. Tastes authentic and comforting every time.',
+        ],
+        [
+            'reviewer_name' => 'Ananya K.',
+            'rating' => 5,
+            'review_text' => 'Fast delivery and excellent packaging. Green Harmony Tea is light, clean, and great for evening relaxation.',
+        ],
+    ];
+}
+
+function review_stars(int $rating): string
+{
+    $safeRating = max(1, min(5, $rating));
+    return str_repeat('&#9733;', $safeRating) . str_repeat('&#9734;', 5 - $safeRating);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -134,6 +170,25 @@ unset($_SESSION['contact_success'], $_SESSION['contact_error']);
 
       <div class="more-products-wrap">
         <a class="btn btn-detail btn-inline" href="products.php">View More Products</a>
+      </div>
+    </section>
+
+    <section class="fade-in reviews-section" id="reviews">
+      <h2>Customer Reviews</h2>
+      <p class="section-note">What our customers are saying about Green Sense.</p>
+      <div class="reviews-grid">
+        <?php foreach ($reviews as $review): ?>
+          <?php $rating = max(1, min(5, (int) $review['rating'])); ?>
+          <article class="review-card">
+            <div class="review-head">
+              <h3><?php echo htmlspecialchars($review['reviewer_name']); ?></h3>
+              <span class="review-stars" aria-label="<?php echo $rating; ?> out of 5 stars">
+                <?php echo review_stars($rating); ?>
+              </span>
+            </div>
+            <p>"<?php echo nl2br(htmlspecialchars($review['review_text'])); ?>"</p>
+          </article>
+        <?php endforeach; ?>
       </div>
     </section>
 
