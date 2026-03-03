@@ -17,7 +17,7 @@ session_start();
 
   <main class="container">
     <section class="fade-in visible gallery-section">
-      <h2>Estate Gallery</h2>
+      <h2> Gallery </h2>
       <p class="section-note">Coffee estate and tea estate moments from farming, extraction, and visitors.</p>
 
       <div class="gallery-grid">
